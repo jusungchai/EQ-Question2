@@ -3,7 +3,7 @@ export const dateStats = (statsHourly) => {
   for (let elm of statsHourly) {
     if (result[elm.date]) {
       result[elm.date].impressions += elm.impressions
-      result[elm.date].clicks += elm.impressions
+      result[elm.date].clicks += elm.clicks
       result[elm.date].revenue += parseFloat(elm.revenue)
     } else {
       result[elm.date] = {
@@ -21,7 +21,7 @@ export const hourStats = (statsHourly) => {
   for (let elm of statsHourly) {
     if (result[elm.hour]) {
       result[elm.hour].impressions += elm.impressions
-      result[elm.hour].clicks += elm.impressions
+      result[elm.hour].clicks += elm.clicks
       result[elm.hour].revenue += parseFloat(elm.revenue)
     } else {
       result[elm.hour] = {
