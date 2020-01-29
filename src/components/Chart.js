@@ -82,19 +82,19 @@ export default function Chart(props) {
           labels: all[3].data.map(data => data.date),
           datasets: [
             {
-              label: "Impressions",              
+              label: "Impressions",
               data: all[3].data.map(data => data.impressions),
               fill: false,
               borderColor: "green"
             },
             {
-              label: "Clicks",              
+              label: "Clicks",
               data: all[3].data.map(data => data.clicks),
               fill: false,
               borderColor: "blue"
             },
             {
-              label: "Revenue",              
+              label: "Revenue",
               data: all[3].data.map(data => data.revenue),
               fill: false,
               borderColor: "purple"
@@ -147,47 +147,51 @@ export default function Chart(props) {
             }
           ]
         },
+        eventsOption: null,
+        statsOption: null,
         loading: false
       })
     })
   }, [])
 
   const renderEvents = () => {
-    if (state.eventsOption === "spread") {
-      return (<Bar
-        data={state.eventDataSpread}
-      />)
-    }
-    if (state.eventsOption === "hour") {
-      return (<Bar
-        data={state.eventDataHour}
-      />)
-    }
-    if (state.eventsOption === "simple") {
-      return (<Bar
-        data={state.eventDataSimple}
-      />)
+    switch (state.eventsOption) {
+      case "spread":
+        return (<Bar
+          data={state.eventDataSpread}
+        />)
+      case "hour":
+        return (<Bar
+          data={state.eventDataHour}
+        />)
+      case "simple":
+        return (<Bar
+          data={state.eventDataSimple}
+        />)
+      default:
+        return
     }
   }
 
   const renderStats = () => {
-    if (state.statsOption === "spread") {
-      return (<Line
-        data={state.statsDataSpread}
-        options={style.options}
-      />)
-    }
-    if (state.statsOption === "hour") {
-      return (<Line
-        data={state.statsDataHour}
-        options={style.options}
-      />)
-    }
-    if (state.statsOption === "simple") {
-      return (<Line
-        data={state.statsDataSimple}
-        options={style.options}
-      />)
+    switch (state.statsOption) {
+      case "spread":
+        return (<Line
+          data={state.statsDataSpread}
+          options={style.options}
+        />)
+      case "hour":
+        return (<Line
+          data={state.statsDataHour}
+          options={style.options}
+        />)
+      case "simple":
+        return (<Line
+          data={state.statsDataSimple}
+          options={style.options}
+        />)
+      default:
+        return
     }
   }
 
