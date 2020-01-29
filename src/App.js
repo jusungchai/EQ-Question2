@@ -4,6 +4,7 @@ import Home from './components/Home'
 import Chart from './components/Chart'
 import Table from './components/Table'
 import MapVisual from './components/MapVisual'
+import './App.css';
 
 function App() {
   return (
