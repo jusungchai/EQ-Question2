@@ -1,194 +1,87 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Bar, Line } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 import Select from 'react-select'
-import { dateEvents, hourEvents } from '../helpers/createEvents'
-import { dateStats, hourStats } from '../helpers/createStats'
-import { style } from '../styles/styles'
+import { generateDailyChartsData } from '../helpers/createChartData'
+import { eventStyle, impressionStyle, clickStyle, revenueStyle } from '../styles/styles'
 
 export default function Chart(props) {
-  const eventsOptions = [
-    { value: 'simple', label: 'Events Per Day (Simple)' },
-    { value: 'spread', label: 'Events Per Day (Spread)' },
-    { value: 'hour', label: 'Events Per Hour' }
-  ]
 
-  const statsOptions = [
-    { value: 'simple', label: 'Stats Per Day (Simple)' },
-    { value: 'spread', label: 'Stats Per Day (Spread)' },
-    { value: 'hour', label: 'Stats Per Hour' }
+  const options = [
+    { value: 'dailyEvents', label: 'Daily Events' }, 
+    { value: 'dailyImpressions', label: 'Daily Impressions' },
+    { value: 'dailyClicks', label: 'Daily Clicks' },
+    { value: 'dailyRevenue', label: 'Daily Revenue' } 
   ]
 
   const [state, setState] = useState({
-    eventDataSpread: null,
-    eventDataSimple: null,
-    eventDataHour: null,
-    statsDataSpread: null,
-    statsDataSimple: null,
-    statsDataHour: null,
-    eventsOption: null,
-    statsOption: null,
+    chartOption: null,
+    dailyEvents: null,
+    dailyImpressions: null,
+    dailyClicks: null,
+    dailyRevenue: null,
     loading: true
   })
-
+  
   useEffect(() => {
-    const hourlyEvents = axios.get('/events/hourly')
-    const dailyEvents = axios.get('/events/daily')
-    const hourlyStats = axios.get('/stats/hourly')
-    const dailyStats = axios.get('/stats/daily')
+    const dailyEvents = axios.get('/events/daily1')
+    const dailyStats = axios.get('/stats/daily1')
+    const poi = axios.get('/poi')
+
     Promise.all([
-      Promise.resolve(hourlyEvents),
       Promise.resolve(dailyEvents),
-      Promise.resolve(hourlyStats),
-      Promise.resolve(dailyStats)
-    ]).then((all) => {
-      const eventDateData = dateEvents(all[0].data)
-      const eventHourData = hourEvents(all[0].data)
-      const statDateData = dateStats(all[2].data)
-      const statHourData = hourStats(all[2].data)
+      Promise.resolve(dailyStats),
+      Promise.resolve(poi)
+    ]).then((all) => {      
+      const dailyEventsData = generateDailyChartsData(all[0].data, all[2].data, "events")
+      const dailyImpressionsData = generateDailyChartsData(all[1].data, all[2].data, "impressions")
+      const dailyClicksData = generateDailyChartsData(all[1].data, all[2].data, "clicks")
+      const dailyRevenueData = generateDailyChartsData(all[1].data, all[2].data, "revenue")
 
       setState({
-        eventDataSimple: {
-          labels: all[1].data.map(data => data.date),
-          datasets: [
-            {
-              label: "Events Per Day (Simple)",
-              backgroundColor: "red",
-              data: all[1].data.map(data => data.events)
-            }
-          ]
+        chartOption: null,
+        dailyEvents: {
+          labels: dailyEventsData.labels,
+          datasets: dailyEventsData.datasets
         },
-        eventDataSpread: {
-          labels: Object.keys(eventDateData),
-          datasets: [
-            {
-              label: "Events Per Day (Spread)",
-              backgroundColor: "orange",
-              data: Object.values(eventDateData)
-            }
-          ]
+        dailyImpressions: {
+          labels: dailyImpressionsData.labels,
+          datasets: dailyImpressionsData.datasets
         },
-        eventDataHour: {
-          labels: Object.keys(eventHourData),
-          datasets: [
-            {
-              label: "Events Per Hour",
-              backgroundColor: "yellow",
-              data: Object.values(eventHourData)
-            }
-          ]
+        dailyClicks: {
+          labels: dailyClicksData.labels,
+          datasets: dailyClicksData.datasets
         },
-        statsDataSimple: {
-          labels: all[3].data.map(data => data.date),
-          datasets: [
-            {
-              label: "Impressions",
-              data: all[3].data.map(data => data.impressions),
-              fill: false,
-              borderColor: "green"
-            },
-            {
-              label: "Clicks",
-              data: all[3].data.map(data => data.clicks),
-              fill: false,
-              borderColor: "blue"
-            },
-            {
-              label: "Revenue",
-              data: all[3].data.map(data => data.revenue),
-              fill: false,
-              borderColor: "purple"
-            }
-          ]
+        dailyRevenue: {
+          labels: dailyRevenueData.labels,
+          datasets: dailyRevenueData.datasets
         },
-        statsDataSpread: {
-          labels: Object.keys(statDateData),
-          datasets: [
-            {
-              label: "Impressions",
-              data: Object.values(statDateData).map(data => data.impressions),
-              fill: false,
-              borderColor: "red"
-            },
-            {
-              label: "Clicks",
-              data: Object.values(statDateData).map(data => data.clicks),
-              fill: false,
-              borderColor: "blue"
-            },
-            {
-              label: "Revenue",
-              data: Object.values(statDateData).map(data => data.revenue),
-              fill: false,
-              borderColor: "orange"
-            }
-          ]
-        },
-        statsDataHour: {
-          labels: Object.keys(statHourData),
-          datasets: [
-            {
-              label: "Impressions",
-              data: Object.values(statHourData).map(data => data.impressions),
-              fill: false,
-              borderColor: "red"
-            },
-            {
-              label: "Clicks",
-              data: Object.values(statHourData).map(data => data.clicks),
-              fill: false,
-              borderColor: "blue"
-            },
-            {
-              label: "Revenue",
-              data: Object.values(statHourData).map(data => data.revenue),
-              fill: false,
-              borderColor: "orange"
-            }
-          ]
-        },
-        eventsOption: null,
-        statsOption: null,
         loading: false
       })
     })
   }, [])
 
-  const renderEvents = () => {
-    switch (state.eventsOption) {
-      case "spread":
+  const renderChart = () => {
+    switch (state.chartOption) {
+      case "dailyEvents":
         return (<Bar
-          data={state.eventDataSpread}
-        />)
-      case "hour":
+          data={state.dailyEvents}
+          options={eventStyle.options}
+        />)      
+      case "dailyImpressions":
         return (<Bar
-          data={state.eventDataHour}
+          data={state.dailyImpressions}
+          options={impressionStyle.options}
         />)
-      case "simple":
+      case "dailyClicks":
         return (<Bar
-          data={state.eventDataSimple}
+          data={state.dailyClicks}
+          options={clickStyle.options}
         />)
-      default:
-        return
-    }
-  }
-
-  const renderStats = () => {
-    switch (state.statsOption) {
-      case "spread":
-        return (<Line
-          data={state.statsDataSpread}
-          options={style.options}
-        />)
-      case "hour":
-        return (<Line
-          data={state.statsDataHour}
-          options={style.options}
-        />)
-      case "simple":
-        return (<Line
-          data={state.statsDataSimple}
-          options={style.options}
+      case "dailyRevenue":
+        return (<Bar
+          data={state.dailyRevenue}
+          options={revenueStyle.options}
         />)
       default:
         return
@@ -198,20 +91,12 @@ export default function Chart(props) {
   return state.loading ? null : (
     <React.Fragment>
       <h1>Client-Side General Chart Visualizations</h1>
-      <h3>Select To View Events From List Below</h3>
+      <h3>Select To View Data Chart for First Week of January 2017</h3>
       <Select
-        onChange={(event) => setState({ ...state, eventsOption: event.value })}
-        options={eventsOptions}
+        onChange={(event) => setState({ ...state, chartOption: event.value })}
+        options={options}
       />
-      {renderEvents()}
-
-      <h3>Select To View Stats From List Below</h3>
-      <Select
-        onChange={(event) => setState({ ...state, statsOption: event.value })}
-        options={statsOptions}
-      />
-      {renderStats()}
-
+      {renderChart()}
       <button onClick={() => props.history.push('/')}>HOME</button>
     </React.Fragment>
   )
