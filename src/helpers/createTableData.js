@@ -1,5 +1,6 @@
 export const eventsHourly = (data) => {
   const columns = [
+    { title: 'Name', field: 'name'},
     { title: 'Date', field: 'date' },
     { title: 'Hour', field: 'hour' },
     { title: 'Events', field: 'events' }
@@ -9,6 +10,7 @@ export const eventsHourly = (data) => {
 
 export const eventsDaily = (data) => {
   const columns = [
+    { title: 'Name', field: 'name'},
     { title: 'Date', field: 'date' },      
     { title: 'Events', field: 'events' }
   ]    
@@ -17,6 +19,7 @@ export const eventsDaily = (data) => {
 
 export const statsHourly = (data) => {
   const columns = [
+    { title: 'Name', field: 'name'},
     { title: 'Date', field: 'date' },
     { title: 'Hour', field: 'hour' },
     { title: 'Impressions', field: 'impressions' },
@@ -28,6 +31,7 @@ export const statsHourly = (data) => {
 
 export const statsDaily = (data) => {
   const columns = [
+    { title: 'Name', field: 'name'},
     { title: 'Date', field: 'date' },      
     { title: 'Impressions', field: 'impressions' },
     { title: 'Clicks', field: 'clicks' },

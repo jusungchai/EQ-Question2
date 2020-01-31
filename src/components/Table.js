@@ -36,10 +36,10 @@ export default function Table(props) {
   });
 
   useEffect(() => {
-    const hourlyEvents = axios.get('/events/hourly')
-    const dailyEvents = axios.get('/events/daily')
-    const hourlyStats = axios.get('/stats/hourly')
-    const dailyStats = axios.get('/stats/daily')
+    const hourlyEvents = axios.get('/events/hourly1')
+    const dailyEvents = axios.get('/events/daily1')
+    const hourlyStats = axios.get('/stats/hourly1')
+    const dailyStats = axios.get('/stats/daily1')
     const pois = axios.get('/poi')
     Promise.all([
       Promise.resolve(hourlyEvents), //0
