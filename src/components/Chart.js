@@ -29,15 +29,15 @@ export default function Chart(props) {
     const poi = axios.get('/poi')
 
     Promise.all([
-      Promise.resolve(dailyEvents),
-      Promise.resolve(dailyStats),
-      Promise.resolve(poi)
+      dailyEvents,
+      dailyStats,
+      poi
     ]).then((all) => {      
       const dailyEventsData = generateDailyChartsData(all[0].data, all[2].data, "events")
       const dailyImpressionsData = generateDailyChartsData(all[1].data, all[2].data, "impressions")
       const dailyClicksData = generateDailyChartsData(all[1].data, all[2].data, "clicks")
       const dailyRevenueData = generateDailyChartsData(all[1].data, all[2].data, "revenue")
-
+      
       setState({
         chartOption: null,
         dailyEvents: {
@@ -67,7 +67,7 @@ export default function Chart(props) {
         return (<Bar
           data={state.dailyEvents}
           options={eventStyle.options}
-        />)      
+        />)
       case "dailyImpressions":
         return (<Bar
           data={state.dailyImpressions}
